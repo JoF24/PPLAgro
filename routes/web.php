@@ -1,13 +1,20 @@
 <?php
 
-use App\Http\Controllers\halaman_utama;
-use App\Http\Controllers\login;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use PHPUnit\TextUI\Configuration\Source;
 
 Route::get('/', function () {
-    return view('halaman_utama');
+    return view('welcome');
 });
 
-Route::resource('login',login::class);
-Route::resource('pelatihan',halaman_utama::class);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
